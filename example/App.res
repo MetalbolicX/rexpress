@@ -15,8 +15,7 @@ let router = Router.make()
 // })
 
 app->useRouterWithPath("/someRoute", router)
-// app->useRouter(router, ~path="/someRoute")
-// app->use(jsonMiddleware())
+// app->useRouter(~router=router, ~path="/someRoute")
 app->use(jsonMiddleware())
 
 app->get(String("/"), (_req, res) => {

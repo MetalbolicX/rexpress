@@ -20,19 +20,24 @@ external asMiddleware: express => middleware = "%identity"
 // @module("express") external jsonMiddleware: unit => middleware = "json"
 // @module("express") external jsonMiddlewareWithOptions: {..} => middleware = "json"
 @module("express") external jsonMiddleware: (~options: {..}=?) => middleware = "json"
-@module("express") external rawMiddleware: unit => middleware = "raw"
-@module("express") external rawMiddlewareWithOptions: {..} => middleware = "raw"
-@module("express") external textMiddleware: unit => middleware = "text"
-@module("express") external textMiddlewareWithOptions: {..} => middleware = "text"
-@module("express")
-external urlencodedMiddleware: unit => middleware = "urlencoded"
-@module("express")
-external urlencodedMiddlewareWithOptions: {..} => middleware = "urlencoded"
-@module("express") external staticMiddleware: string => middleware = "static"
-@module("express")
-external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
+// @module("express") external rawMiddleware: unit => middleware = "raw"
+// @module("express") external rawMiddlewareWithOptions: {..} => middleware = "raw"
+@module("express") external rawMiddleware: (~options: {..}=?) => middleware = "raw"
+// @module("express") external textMiddleware: unit => middleware = "text"
+// @module("express") external textMiddlewareWithOptions: {..} => middleware = "text"
+@module("express") external textMiddleware: (~options: {..}=?) => middleware = "text"
+// @module("express")
+// external urlencodedMiddleware: unit => middleware = "urlencoded"
+// @module("express")
+// external urlencodedMiddlewareWithOptions: {..} => middleware = "urlencoded"
+@module("express") external urlencodedMiddleware: (~options: {..}=?) => middleware = "urlencoded"
+// @module("express") external staticMiddleware: string => middleware = "static"
+// @module("express")
+// external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
+@module("express") external staticMiddleware: (string, ~options: {..}=?) => middleware = "static"
 
 @send external use: (express, middleware, ~path: string=?) => unit = "use"
+@send external set: (express, string, string) => unit = "set"
 
 // @send external useWithError: (express, middlewareWithError) => unit = "use"
 // @send external useWithPathAndError: (express, string, middlewareWithError) => unit = "use"
@@ -135,13 +140,14 @@ let is: (req, string) => option<string>
 @send external location: (res, string) => res = "location"
 @send external redirect: (res, string) => res = "redirect"
 @send external redirectWithStatusCode: (res, ~statusCode: int, string) => res = "redirect"
+@send external render: (res, string, ~locals: {..}=?, ~fn: (exn, string) => unit=?) => unit = "render"
 @send external send: (res, 'a) => res = "send"
 @send external sendFile: (res, string) => res = "sendFile"
 @send external sendFileWithOptions: (res, string, {..}) => res = "sendFile"
 @send external sendStatus: (res, int) => res = "sendStatus"
-@send external set: (res, string, string) => unit = "set"
+@send external setRes: (res, string, string) => unit = "set"
 // @send external status: (res, int) => res = "status"
-@send external \"type": (res, string) => string = "type"
+@send external type_: (res, string) => string = "type"
 @send external vary: (res, string) => res = "vary"
 
 // Define a variant for HTTP status codes
@@ -163,11 +169,11 @@ module Router: {
   type t
   @module("express") external make: () => t = "Router"
   // @send external use: (t, middleware) => unit = "use"
-  @send external useWithPath: (t, string, middleware) => unit = "use"
+  // @send external useWithPath: (t, string, middleware) => unit = "use"
 
   // @send external useWithError: (t, middlewareWithError) => unit = "use"
   // @send external useWithPathAndError: (t, string, middlewareWithError) => unit = "use"
-  @send external use: (t, middleware) => unit = "use"
+  @send external use: (t, middleware, ~path: string=?) => unit = "use"
 
   @send external get: (t, apiRoute, handler) => unit = "get"
   @send external post: (t, apiRoute, handler) => unit = "post"
@@ -197,4 +203,4 @@ module Router: {
 
 @send external useRouter: (express, Router.t) => unit = "use"
 @send external useRouterWithPath: (express, string, Router.t) => unit = "use"
-// @send external useRouter: (express, Router.t, ~path: string=?) => unit = "use"
+// @send external useRouter: (express, ~router: Router.t, ~path: string=?) => unit = "use"
