@@ -5,14 +5,14 @@ type express
 @module external expressCjs: unit => express = "express"
 @module("express") external express: unit => express = "default"
 
-type req
-type res
+type request
+type response
 
 // type middleware = (req, res, unit => unit) => unit
-type middleware = (req, res, unit => unit, ~error: exn=?) => unit
+type middleware = (request, response, unit => unit, ~error: exn=?) => unit
 // type middlewareWithError = (Js.Exn.t, req, res, unit => unit) => unit
-type handler = (req, res) => unit
-type asyncHandler = (req, res) => promise<unit>
+type handler = (request, response) => unit
+type asyncHandler = (request, response) => promise<unit>
 
 external asMiddleware: express => middleware = "%identity"
 
@@ -84,86 +84,86 @@ type server
 
 type method = [#GET | #POST | #PUT | #DELETE | #PATCH]
 
-// req properties
-@get external baseUrl: req => string = "baseUrl"
-@get external body: req => 'a = "body"
-@get external cookies: req => 'a = "cookies"
-@get external fresh: req => bool = "fresh"
-@get external hostname: req => string = "hostname"
-@get external ip: req => string = "ip"
-@get external ips: req => array<string> = "ips"
-@get external method: req => method = "method"
-@get external originalUrl: req => string = "originalUrl"
-@get external params: req => 'a = "params"
-@get external path: req => string = "path"
-@get external protocol: req => string = "protocol"
-@get external query: req => 'a = "query"
-@get external route: req => 'a = "route"
-@get external secure: req => bool = "secure"
-@get external signedCookies: req => 'a = "signedCookies"
-@get external stale: req => bool = "stale"
-@get external subdomains: req => array<string> = "subdomains"
-@get external xhr: req => bool = "xhr"
+// request properties
+@get external baseUrl: request => string = "baseUrl"
+@get external body: request => 'a = "body"
+@get external cookies: request => 'a = "cookies"
+@get external fresh: request => bool = "fresh"
+@get external hostname: request => string = "hostname"
+@get external ip: request => string = "ip"
+@get external ips: request => array<string> = "ips"
+@get external method: request => method = "method"
+@get external originalUrl: request => string = "originalUrl"
+@get external params: request => 'a = "params"
+@get external path: request => string = "path"
+@get external protocol: request => string = "protocol"
+@get external query: request => 'a = "query"
+@get external route: request => 'a = "route"
+@get external secure: request => bool = "secure"
+@get external signedCookies: request => 'a = "signedCookies"
+@get external stale: request => bool = "stale"
+@get external subdomains: request => array<string> = "subdomains"
+@get external xhr: request => bool = "xhr"
 
 // This is a bit unfortunate, as it breaks the zero-cost philosophy,
 // but the `string | false` signature doesn't play well with an ML type-system
 external asString: 'a => string = "%identity"
-let parseValue = value =>
+let parseValue: 'a => option<string> = value =>
   switch Js.typeof(value) {
   | "boolean" => None
   | _ => Some(value->asString)
   }
 
-// req methods
-@send external accepts: (req, array<string>) => 'a = "accepts"
-@send external acceptsCharset: (req, array<string>) => 'a = "acceptsCharset"
-@send external acceptsEncodings: (req, array<string>) => 'a = "acceptsEncodings"
-@send external acceptsLanguages: (req, array<string>) => 'a = "acceptsLanguages"
+// request methods
+@send external accepts: (request, array<string>) => 'a = "accepts"
+@send external acceptsCharset: (request, array<string>) => 'a = "acceptsCharset"
+@send external acceptsEncodings: (request, array<string>) => 'a = "acceptsEncodings"
+@send external acceptsLanguages: (request, array<string>) => 'a = "acceptsLanguages"
 
-let accepts = (req, value) => req->accepts(value)->parseValue
-let acceptsCharset = (req, value) => req->acceptsCharset(value)->parseValue
-let acceptsEncodings = (req, value) => req->acceptsEncodings(value)->parseValue
-let acceptsLanguages = (req, value) => req->acceptsLanguages(value)->parseValue
+let accepts: (request, array<string>) => option<string> = (req, value) => req->accepts(value)->parseValue
+let acceptsCharset: (request, array<string>) => option<string> = (req, value) => req->acceptsCharset(value)->parseValue
+let acceptsEncodings: (request, array<string>) => option<string> = (req, value) => req->acceptsEncodings(value)->parseValue
+let acceptsLanguages: (request, array<string>) => option<string> = (req, value) => req->acceptsLanguages(value)->parseValue
 
-@send external getRequestHeader: (req, string) => option<string> = "get"
-@send external is: (req, string) => 'a = "is"
+@send external getRequestHeader: (request, string) => option<string> = "get"
+@send external is: (request, string) => 'a = "is"
 
-let is = (req, value) => req->is(value)->parseValue
+let is: (request, string) => option<string> = (req, value) => req->is(value)->parseValue
 
-@send external param: (req, string) => option<string> = "param"
+@send external param: (request, string) => option<string> = "param"
 
-// res properties
-@get external headersSent: res => bool = "headersSent"
-@get external locals: res => {..} = "locals"
+// response properties
+@get external headersSent: response => bool = "headersSent"
+@get external locals: response => {..} = "locals"
 
-// res methods
-@send external append: (res, string, string) => res = "append"
-@send external attachment: (res, ~filename: string=?) => res = "attachment"
-@send external cookie: (res, ~name: string, ~value: string) => res = "cookie"
-@send external cookieWithOptions: (res, ~name: string, ~value: string, {..}) => res = "cookie"
-@send external clearCookie: (res, string) => res = "clearCookie"
-@send external download: (res, ~path: string) => res = "download"
-@send external downloadWithFilename: (res, ~path: string, ~filename: string) => res = "download"
-@send external end: res => res = "end"
-@send external endWithData: (res, 'a) => res = "end"
-@send external endWithDataAndEncoding: (res, 'a, ~encoding: string) => res = "end"
-@send external format: (res, {..}) => res = "format"
-@send external getResponseHeader: (res, string) => option<string> = "get"
-@send external json: (res, 'a) => res = "json"
-@send external jsonp: (res, 'a) => res = "jsonp"
-@send external links: (res, Js.Dict.t<string>) => res = "links"
-@send external location: (res, string) => res = "location"
-@send external redirect: (res, string) => res = "redirect"
-@send external redirectWithStatusCode: (res, ~statusCode: int, string) => res = "redirect"
-@send external render: (res, string, ~locals: {..}=?, ~fn: (exn, string) => unit=?) => unit = "render"
-@send external send: (res, 'a) => res = "send"
-@send external sendFile: (res, string) => res = "sendFile"
-@send external sendFileWithOptions: (res, string, {..}) => res = "sendFile"
-@send external setStatus: (res, int) => res = "status"
-@send external sendStatus: (res, int) => res = "sendStatus"
-@send external setRes: (res, string, string) => unit = "set"
-@send external type_: (res, string) => string = "type"
-@send external vary: (res, string) => res = "vary"
+// response methods
+@send external append: (response, string, string) => response = "append"
+@send external attachment: (response, ~filename: string=?) => response = "attachment"
+@send external cookie: (response, ~name: string, ~value: string) => response = "cookie"
+@send external cookieWithOptions: (response, ~name: string, ~value: string, {..}) => response = "cookie"
+@send external clearCookie: (response, string) => response = "clearCookie"
+@send external download: (response, ~path: string) => response = "download"
+@send external downloadWithFilename: (response, ~path: string, ~filename: string) => response = "download"
+@send external end: response => response = "end"
+@send external endWithData: (response, 'a) => response = "end"
+@send external endWithDataAndEncoding: (response, 'a, ~encoding: string) => response = "end"
+@send external format: (response, {..}) => response = "format"
+@send external getResponseHeader: (response, string) => option<string> = "get"
+@send external json: (response, 'a) => response = "json"
+@send external jsonp: (response, 'a) => response = "jsonp"
+@send external links: (response, Js.Dict.t<string>) => response = "links"
+@send external location: (response, string) => response = "location"
+@send external redirect: (response, string) => response = "redirect"
+@send external redirectWithStatusCode: (response, ~statusCode: int, string) => response = "redirect"
+@send external render: (response, string, ~locals: {..}=?, ~fn: (exn, string) => unit=?) => unit = "render"
+@send external send: (response, 'a) => response = "send"
+@send external sendFile: (response, string) => response = "sendFile"
+@send external sendFileWithOptions: (response, string, {..}) => response = "sendFile"
+@send external setStatus: (response, int) => response = "status"
+@send external sendStatus: (response, int) => response = "sendStatus"
+@send external setRes: (response, string, string) => unit = "set"
+@send external type_: (response, string) => string = "type"
+@send external vary: (response, string) => response = "vary"
 
 // Define a variant for HTTP status codes
 type httpStatus =
@@ -193,7 +193,7 @@ let getStatusCode: httpStatus => int = status => switch status {
 }
 
 // Helper function to use the variant with the `status` binding
-let status: (res, httpStatus) => res = (response, code) => response->setStatus(getStatusCode(code))
+let status: (response, httpStatus) => response = (res, code) => res->setStatus(getStatusCode(code))
 
 module Router = {
   type t
@@ -221,7 +221,7 @@ module Router = {
   @send external putAsync: (t, apiRoute, asyncHandler) => promise<unit> = "put"
   @send external allAsync: (t, apiRoute, asyncHandler) => promise<unit> = "all"
 
-  type paramHandler = (req, res, unit => unit, string, string) => unit
+  type paramHandler = (request, response, unit => unit, string, string) => unit
 
   @send external param: (t, string, paramHandler) => unit = "param"
   @deprecated("deprecated as of v4.11.0")
