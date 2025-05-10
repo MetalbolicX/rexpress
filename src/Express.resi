@@ -8,9 +8,11 @@ type express
 type req
 type res
 
-type middleware = (req, res, unit => unit) => unit
-type middlewareWithError = (Js.Exn.t, req, res, unit => unit) => unit
+// type middleware = (req, res, unit => unit) => unit
+// type middlewareWithError = (Js.Exn.t, req, res, unit => unit) => unit
+type middleware = (req, res, unit => unit, ~error: exn=?) => unit
 type handler = (req, res) => unit
+type asyncHandler = (req, res) => promise<unit>
 
 external asMiddleware: express => middleware = "%identity"
 
@@ -32,22 +34,31 @@ external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
 
 @send external use: (express, middleware, ~path: string=?) => unit = "use"
 
-@send external useWithError: (express, middlewareWithError) => unit = "use"
-@send external useWithPathAndError: (express, string, middlewareWithError) => unit = "use"
+// @send external useWithError: (express, middlewareWithError) => unit = "use"
+// @send external useWithPathAndError: (express, string, middlewareWithError) => unit = "use"
 
 @unboxed
-type route =
+type apiRoute =
   | String(string)
   | RegExp(RegExp.t)
 
-@send external get: (express, route, handler) => unit = "get"
-@send external post: (express, route, handler) => unit = "post"
-@send external delete: (express, string, handler) => unit = "delete"
+@send external get: (express, apiRoute, handler) => unit = "get"
+@send external post: (express, apiRoute, handler) => unit = "post"
+@send external delete: (express, apiRoute, handler) => unit = "delete"
 @deprecated("Express 5.0 deprecates app.del(), use app.delete() instead")
-@send external del: (express, string, handler) => unit = "del"
-@send external patch: (express, string, handler) => unit = "patch"
-@send external put: (express, string, handler) => unit = "put"
-@send external all: (express, string, handler) => unit = "all"
+@send external del: (express, apiRoute, handler) => unit = "del"
+@send external patch: (express, apiRoute, handler) => unit = "patch"
+@send external put: (express, apiRoute, handler) => unit = "put"
+@send external all: (express, apiRoute, handler) => unit = "all"
+
+// Asynchronous cases
+@send external allAsync: (express, apiRoute, asyncHandler) => promise<unit> = "all"
+@send external getAsync: (express, apiRoute, asyncHandler) => promise<unit> = "get"
+@send external postAsync: (express, apiRoute, asyncHandler) => promise<unit> = "post"
+@send external deleteAsync: (express, apiRoute, asyncHandler) => promise<unit> = "delete"
+@send external delAsync: (express, apiRoute, asyncHandler) => promise<unit> = "del"
+@send external patchAsync: (express, apiRoute, asyncHandler) => promise<unit> = "patch"
+@send external putAsync: (express, apiRoute, asyncHandler) => promise<unit> = "put"
 
 @send external enable: (express, string) => unit = "enable"
 @send external enabled: (express, string) => bool = "enabled"
@@ -146,25 +157,34 @@ type httpStatus =
   | InternalServerError
   | NotImplemented
 
-let setStatus: (res, httpStatus) => res
+let status: (res, httpStatus) => res
 
 module Router: {
   type t
   @module("express") external make: () => t = "Router"
-  @send external use: (t, middleware) => unit = "use"
+  // @send external use: (t, middleware) => unit = "use"
   @send external useWithPath: (t, string, middleware) => unit = "use"
 
-  @send external useWithError: (t, middlewareWithError) => unit = "use"
-  @send external useWithPathAndError: (t, string, middlewareWithError) => unit = "use"
+  // @send external useWithError: (t, middlewareWithError) => unit = "use"
+  // @send external useWithPathAndError: (t, string, middlewareWithError) => unit = "use"
+  @send external use: (t, middleware) => unit = "use"
 
-  @send external get: (t, string, handler) => unit = "get"
-  @send external post: (t, string, handler) => unit = "post"
-  @send external delete: (t, string, handler) => unit = "delete"
+  @send external get: (t, apiRoute, handler) => unit = "get"
+  @send external post: (t, apiRoute, handler) => unit = "post"
+  @send external delete: (t, apiRoute, handler) => unit = "delete"
   @deprecated("Express 5.0 deprecates app.del(), use app.delete() instead")
-  @send external del: (t, string, handler) => unit = "del"
-  @send external patch: (t, string, handler) => unit = "patch"
-  @send external put: (t, string, handler) => unit = "put"
-  @send external all: (t, string, handler) => unit = "all"
+  @send external del: (t, apiRoute, handler) => unit = "del"
+  @send external patch: (t, apiRoute, handler) => unit = "patch"
+  @send external put: (t, apiRoute, handler) => unit = "put"
+  @send external all: (t, apiRoute, handler) => unit = "all"
+
+  // Asynchronous cases
+  @send external getAsync: (t, apiRoute, asyncHandler) => promise<unit> = "get"
+  @send external postAsync: (t, apiRoute, asyncHandler) => promise<unit> = "post"
+  @send external deleteAsync: (t, apiRoute, asyncHandler) => promise<unit> = "delete"
+  @send external patchAsync: (t, apiRoute, asyncHandler) => promise<unit> = "patch"
+  @send external putAsync: (t, apiRoute, asyncHandler) => promise<unit> = "put"
+  @send external allAsync: (t, apiRoute, asyncHandler) => promise<unit> = "all"
 
   type paramHandler = (req, res, unit => unit, string, string) => unit
 
