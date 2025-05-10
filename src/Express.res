@@ -15,8 +15,9 @@ type handler = (req, res) => unit
 external asMiddleware: express => middleware = "%identity"
 
 // The *Middleware suffixes aren't really nice but avoids forcing people to disable warning 44
-@module("express") external jsonMiddleware: unit => middleware = "json"
-@module("express") external jsonMiddlewareWithOptions: {..} => middleware = "json"
+// @module("express") external jsonMiddleware: unit => middleware = "json"
+// @module("express") external jsonMiddlewareWithOptions: {..} => middleware = "json"
+@module("express") external jsonMiddleware: (~options: {..}=?) => middleware = "json"
 @module("express") external rawMiddleware: unit => middleware = "raw"
 @module("express") external rawMiddlewareWithOptions: {..} => middleware = "raw"
 @module("express") external textMiddleware: unit => middleware = "text"
@@ -29,8 +30,6 @@ external urlencodedMiddlewareWithOptions: {..} => middleware = "urlencoded"
 @module("express")
 external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
 
-// @send external use: (express, middleware) => unit = "use"
-// @send external useWithPath: (express, string, middleware) => unit = "use"
 @send external use: (express, middleware, ~path: string=?) => unit = "use"
 
 @send external useWithError: (express, middlewareWithError) => unit = "use"
@@ -43,12 +42,12 @@ type route =
 
 @send external get: (express, route, handler) => unit = "get"
 @send external post: (express, route, handler) => unit = "post"
-@send external delete: (express, string, handler) => unit = "delete"
+@send external delete: (express, route, handler) => unit = "delete"
 @deprecated("Express 5.0 deprecates app.del(), use app.delete() instead")
-@send external del: (express, string, handler) => unit = "del"
-@send external patch: (express, string, handler) => unit = "patch"
-@send external put: (express, string, handler) => unit = "put"
-@send external all: (express, string, handler) => unit = "all"
+@send external del: (express, route, handler) => unit = "del"
+@send external patch: (express, route, handler) => unit = "patch"
+@send external put: (express, route, handler) => unit = "put"
+@send external all: (express, route, handler) => unit = "all"
 
 @send external enable: (express, string) => unit = "enable"
 @send external enabled: (express, string) => bool = "enabled"

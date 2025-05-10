@@ -15,8 +15,9 @@ type handler = (req, res) => unit
 external asMiddleware: express => middleware = "%identity"
 
 // The *Middleware suffixes aren't really nice but avoids forcing people to disable warning 44
-@module("express") external jsonMiddleware: unit => middleware = "json"
-@module("express") external jsonMiddlewareWithOptions: {..} => middleware = "json"
+// @module("express") external jsonMiddleware: unit => middleware = "json"
+// @module("express") external jsonMiddlewareWithOptions: {..} => middleware = "json"
+@module("express") external jsonMiddleware: (~options: {..}=?) => middleware = "json"
 @module("express") external rawMiddleware: unit => middleware = "raw"
 @module("express") external rawMiddlewareWithOptions: {..} => middleware = "raw"
 @module("express") external textMiddleware: unit => middleware = "text"
@@ -29,8 +30,6 @@ external urlencodedMiddlewareWithOptions: {..} => middleware = "urlencoded"
 @module("express")
 external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
 
-// @send external use: (express, middleware) => unit = "use"
-// @send external useWithPath: (express, string, middleware) => unit = "use"
 @send external use: (express, middleware, ~path: string=?) => unit = "use"
 
 @send external useWithError: (express, middlewareWithError) => unit = "use"
