@@ -41,7 +41,7 @@ app->all(String("/allRoute"), (_req, res) => {
 // app->useWithError((err, _req, res, _next) => {
 app->use((_req, res, _next, ~error=Exn.raiseError("There was an error")) => {
   Console.error(error)
-  let _ = res->status(InternalServerError)->endWithData("An error occured")
+  let _ = res->status(InternalServerError)->end(~data="An error occured")->ignore
 })
 
 let port = 8081
