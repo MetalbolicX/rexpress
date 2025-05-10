@@ -29,14 +29,20 @@ external urlencodedMiddlewareWithOptions: {..} => middleware = "urlencoded"
 @module("express")
 external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
 
-@send external use: (express, middleware) => unit = "use"
-@send external useWithPath: (express, string, middleware) => unit = "use"
+// @send external use: (express, middleware) => unit = "use"
+// @send external useWithPath: (express, string, middleware) => unit = "use"
+@send external use: (express, middleware, ~path: string=?) => unit = "use"
 
 @send external useWithError: (express, middlewareWithError) => unit = "use"
 @send external useWithPathAndError: (express, string, middlewareWithError) => unit = "use"
 
-@send external get: (express, string, handler) => unit = "get"
-@send external post: (express, string, handler) => unit = "post"
+@unboxed
+type route =
+  | String(string)
+  | RegExp(RegExp.t)
+
+@send external get: (express, route, handler) => unit = "get"
+@send external post: (express, route, handler) => unit = "post"
 @send external delete: (express, string, handler) => unit = "delete"
 @deprecated("Express 5.0 deprecates app.del(), use app.delete() instead")
 @send external del: (express, string, handler) => unit = "del"
@@ -50,16 +56,16 @@ external staticMiddlewareWithOptions: (string, {..}) => middleware = "static"
 
 type server
 
-@send external listen: (express, int) => server = "listen"
-@send
-external listenWithCallback: (express, int, option<Js.Exn.t> => unit) => server = "listen"
-@send
-external listenWithHostAndCallback: (
-  express,
-  ~port: int,
-  ~host: string,
-  option<Js.Exn.t> => unit,
-) => server = "listen"
+@send external listen: (express,  ~port: int=?, ~host: string=?, ~fn: exn => unit=?) => server = "listen"
+// @send
+// external listenWithCallback: (express, int, option<Js.Exn.t> => unit) => server = "listen"
+// @send
+// external listenWithHostAndCallback: (
+//   express,
+//   ~port: int,
+//   ~host: string,
+//   option<Js.Exn.t> => unit,
+// ) => server = "listen"
 
 type method = [#GET | #POST | #PUT | #DELETE | #PATCH]
 
@@ -137,11 +143,41 @@ let is = (req, value) => req->is(value)->parseValue
 @send external send: (res, 'a) => res = "send"
 @send external sendFile: (res, string) => res = "sendFile"
 @send external sendFileWithOptions: (res, string, {..}) => res = "sendFile"
+@send external status: (res, int) => res = "status"
 @send external sendStatus: (res, int) => res = "sendStatus"
 @send external set: (res, string, string) => unit = "set"
-@send external status: (res, int) => res = "status"
 @send external \"type": (res, string) => string = "type"
 @send external vary: (res, string) => res = "vary"
+
+// Define a variant for HTTP status codes
+type httpStatus =
+  | OK
+  | Created
+  | Accepted
+  | NoContent
+  | BadRequest
+  | Unauthorized
+  | Forbidden
+  | NotFound
+  | InternalServerError
+  | NotImplemented
+
+// Map the variant to the corresponding integer status code
+let getStatusCode: httpStatus => int = status => switch status {
+  | OK => 200
+  | Created => 201
+  | Accepted => 202
+  | NoContent => 204
+  | BadRequest => 400
+  | Unauthorized => 401
+  | Forbidden => 403
+  | NotFound => 404
+  | InternalServerError => 500
+  | NotImplemented => 501
+}
+
+// Helper function to use the variant with the `status` binding
+let setStatus: (res, httpStatus) => res = (response, code) => response->status(getStatusCode(code))
 
 module Router = {
   type t
@@ -172,3 +208,4 @@ module Router = {
 
 @send external useRouter: (express, Router.t) => unit = "use"
 @send external useRouterWithPath: (express, string, Router.t) => unit = "use"
+// @send external useRouter: (express, Router.t, ~path: string=?) => unit = "use"

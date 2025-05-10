@@ -2,9 +2,10 @@
   "name": "rescript-express",
   "version": "0.4.1",
   "scripts": {
-    "clean": "bsb -clean-world",
-    "build": "bsb -make-world",
-    "watch": "bsb -make-world -w"
+    "res:clean": "rescript clean",
+    "res:build": "rescript",
+    "res:dev": "rescript -w",
+    "start": "node ./example/App.res.mjs"
   },
   "keywords": [
     "ReScript",
@@ -13,10 +14,13 @@
   "author": "bloodyowl <bloodyowl@icloud.com>",
   "license": "MIT",
   "devDependencies": {
-    "bs-platform": "^9.0.2",
-    "express": "^4.17.1"
+    "express": "^5.1.0"
   },
   "peerDependencies": {
-    "express": "^4.17.1"
+    "express": "^5.1.0"
+  },
+  "dependencies": {
+    "@rescript/core": "^1.6.1",
+    "rescript": "^11.1.4"
   }
 }
