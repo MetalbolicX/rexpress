@@ -201,6 +201,7 @@ module Router: {
   @send external route: string => t = "route"
 }
 
-@send external useRouter: (express, Router.t) => unit = "use"
-@send external useRouterWithPath: (express, string, Router.t) => unit = "use"
+// @send external useRouter: (express, Router.t) => unit = "use"
+// @send external useRouterWithPath: (express, string, Router.t) => unit = "use"
 // @send external useRouter: (express, ~router: Router.t, ~path: string=?) => unit = "use"
+let useForRouter: (express, Router.t, ~path: string=?) => unit

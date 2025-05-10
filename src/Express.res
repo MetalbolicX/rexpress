@@ -233,3 +233,8 @@ module Router = {
 @send external useRouter: (express, Router.t) => unit = "use"
 @send external useRouterWithPath: (express, string, Router.t) => unit = "use"
 // @send external useRouter: (express, ~router: Router.t, ~path: string=?) => unit = "use"
+let useForRouter: (express, Router.t, ~path: string=?) => unit = (app, router, ~path="/") =>
+  switch path {
+    | p when p->String.length > 1 => app->useRouterWithPath(p, router)
+    | _ => app->useRouter(router)
+  }

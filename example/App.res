@@ -14,8 +14,8 @@ let router = Router.make()
 //   let _ = res->setStatus(InternalServerError)->endWithData("An error occured")
 // })
 
-app->useRouterWithPath("/someRoute", router)
-// app->useRouter(~router=router, ~path="/someRoute")
+// app->useRouterWithPath("/someRoute", router)
+app->useForRouter(router, ~path="/someRoute")
 app->use(jsonMiddleware())
 
 app->get(String("/"), (_req, res) => {
