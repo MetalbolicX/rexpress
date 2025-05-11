@@ -1,17 +1,19 @@
 {
-  "name": "rescript-express",
+  "name": "rexpress",
   "version": "0.4.1",
   "scripts": {
     "res:clean": "rescript clean",
     "res:build": "rescript",
     "res:dev": "rescript -w",
-    "start": "node ./example/App.res.mjs"
+    "start": "bun ./example/App.res.mjs"
   },
   "keywords": [
     "ReScript",
     "express"
   ],
-  "author": "bloodyowl <bloodyowl@icloud.com>",
+  "author": {
+    "name": "José Martínez Santana"
+  },
   "license": "MIT",
   "devDependencies": {
     "express": "^5.1.0"
