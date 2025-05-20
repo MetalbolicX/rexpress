@@ -212,13 +212,46 @@ external listen: (express, ~port: int=?, ~host: string=?, ~fn: exn => unit=?) =>
 @get external subdomains: request => array<string> = "subdomains"
 @get external xhr: request => bool = "xhr"
 
+/**
+  Check if the request accepts the given content types.
+  @param request The Express request object.
+  @param types Array of content types to check.
+  @return The matched content type, or None if not accepted.
+*/
 let accepts: (request, array<string>) => option<string>
+
+/**
+  Check if the request accepts the given character sets.
+  @param request The Express request object.
+  @param charsets Array of character sets to check.
+  @return The matched character set, or None if not accepted.
+*/
 let acceptsCharset: (request, array<string>) => option<string>
+
+/**
+  Check if the request accepts the given encodings.
+  @param request The Express request object.
+  @param encodings Array of encodings to check.
+  @return The matched encoding, or None if not accepted.
+*/
 let acceptsEncodings: (request, array<string>) => option<string>
+
+/**
+  Check if the request accepts the given languages.
+  @param request The Express request object.
+  @param languages Array of languages to check.
+  @return The matched language, or None if not accepted.
+*/
 let acceptsLanguages: (request, array<string>) => option<string>
 
 @send external getRequestHeader: (request, string) => option<string> = "get"
 
+/**
+  Check if the request matches the given content type.
+  @param request The Express request object.
+  @param type The content type to check.
+  @return The matched type, or None if not matched.
+*/
 let is: (request, string) => option<string>
 
 @send external param: (request, string) => option<string> = "param"

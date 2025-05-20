@@ -1,27 +1,60 @@
+/** The main Express application type. */
 type express
 
+/** Create an Express app using CommonJS import. */
 @module external expressCjs: unit => express = "express"
+
+/** Create an Express app using ES module import. */
 @module("express") external express: unit => express = "default"
 
+/** The Express request object. */
 type request
+
+/** The Express response object. */
 type response
 
+/** Synchronous middleware function type. */
 type middleware = (request, response, unit => unit) => unit
+
+/** Synchronous error-handling middleware function type. */
 type errorMiddleware = (exn, request, response, unit => unit) => unit
+
+/** Asynchronous middleware function type. */
 type asyncMiddleware = (request, response, unit => unit) => promise<unit>
+
+/** Asynchronous error-handling middleware function type. */
 type asyncErrorMiddleware = (exn, request, response, unit => unit) => promise<unit>
+
+/** Synchronous route handler type. */
 type handler = (request, response) => unit
+
+/** Asynchronous route handler type. */
 type asyncHandler = (request, response) => promise<unit>
 
+/** Convert an Express app to middleware. */
 external asMiddleware: express => middleware = "%identity"
 
-// The *Middleware suffixes aren't really nice but avoids forcing people to disable warning 44
+/** JSON body parser middleware. */
 @module("express") external jsonMiddleware: (~options: {..}=?) => middleware = "json"
+
+/** Raw body parser middleware. */
 @module("express") external rawMiddleware: (~options: {..}=?) => middleware = "raw"
+
+/** Text body parser middleware. */
 @module("express") external textMiddleware: (~options: {..}=?) => middleware = "text"
+
+/** URL-encoded body parser middleware. */
 @module("express") external urlencodedMiddleware: (~options: {..}=?) => middleware = "urlencoded"
+
+/** Static file serving middleware. */
 @module("express") external staticMiddleware: (string, ~options: {..}=?) => middleware = "static"
 
+/**
+  Use middleware or error handlers on the app.
+  @param express The Express app.
+  @param middlewares The middleware or error handlers to use.
+  @param path Optional path to mount the middleware.
+*/
 @send
 external use: (
   express,
@@ -34,15 +67,20 @@ external use: (
   ],
   ~path: string=?,
 ) => unit = "use"
+
+/** Set a setting on the Express app. */
 @send external set: (express, string, string) => unit = "set"
 
+/** Route type for API endpoints. */
 @unboxed
 type apiRoute =
   | String(string)
   | RegExp(RegExp.t)
 
+/** HTTP method type. */
 type method = [#GET | #POST | #PUT | #DELETE | #PATCH]
 
+/** API handler type, synchronous or asynchronous. */
 type apiHandler =
   | Handler(handler)
   | AsyncHandler(asyncHandler)
@@ -105,6 +143,13 @@ let unwrapMiddleware: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]> => 
     }
   )
 
+/**
+  Register a GET route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let get: (
   express,
   apiRoute,
@@ -116,6 +161,13 @@ let get: (
   | AsyncHandler(fn) => app->getWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
   }
 
+/**
+  Register a route handler for all HTTP methods.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let all: (
   express,
   apiRoute,
@@ -127,6 +179,13 @@ let all: (
   | AsyncHandler(fn) => app->allWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
   }
 
+/**
+  Register a POST route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let post: (
   express,
   apiRoute,
@@ -138,6 +197,13 @@ let post: (
   | AsyncHandler(fn) => app->postWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
   }
 
+/**
+  Register a DELETE route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let delete: (
   express,
   apiRoute,
@@ -149,6 +215,13 @@ let delete: (
   | AsyncHandler(fn) => app->deleteWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
   }
 
+/**
+  Register a PATCH route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let patch: (
   express,
   apiRoute,
@@ -160,6 +233,13 @@ let patch: (
   | AsyncHandler(fn) => app->patchWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
   }
 
+/**
+  Register a PUT route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let put: (
   express,
   apiRoute,
@@ -171,12 +251,25 @@ let put: (
   | AsyncHandler(fn) => app->putWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
   }
 
+/** Enable a setting on the Express app. */
 @send external enable: (express, string) => unit = "enable"
+
+/** Check if a setting is enabled on the Express app. */
 @send external enabled: (express, string) => bool = "enabled"
+
+/** Disable a setting on the Express app. */
 @send external disable: (express, string) => unit = "disable"
 
+/** The Express server type. */
 type server
 
+/**
+  Start the Express server.
+  @param express The Express app.
+  @param port Optional port number.
+  @param host Optional host.
+  @param fn Optional callback for errors.
+*/
 @send
 external listen: (express, ~port: int=?, ~host: string=?, ~fn: exn => unit=?) => server = "listen"
 
@@ -216,18 +309,51 @@ let parseValue: 'a => option<string> = value =>
 @send external acceptsEncodings: (request, array<string>) => 'a = "acceptsEncodings"
 @send external acceptsLanguages: (request, array<string>) => 'a = "acceptsLanguages"
 
+/**
+  Check if the request accepts the given content types.
+  @param request The Express request object.
+  @param types Array of content types to check.
+  @return The matched content type, or None if not accepted.
+*/
 let accepts: (request, array<string>) => option<string> = (req, value) =>
   req->accepts(value)->parseValue
+
+/**
+  Check if the request accepts the given character sets.
+  @param request The Express request object.
+  @param charsets Array of character sets to check.
+  @return The matched character set, or None if not accepted.
+*/
 let acceptsCharset: (request, array<string>) => option<string> = (req, value) =>
   req->acceptsCharset(value)->parseValue
+
+/**
+  Check if the request accepts the given encodings.
+  @param request The Express request object.
+  @param encodings Array of encodings to check.
+  @return The matched encoding, or None if not accepted.
+*/
 let acceptsEncodings: (request, array<string>) => option<string> = (req, value) =>
   req->acceptsEncodings(value)->parseValue
+
+/**
+  Check if the request accepts the given languages.
+  @param request The Express request object.
+  @param languages Array of languages to check.
+  @return The matched language, or None if not accepted.
+*/
 let acceptsLanguages: (request, array<string>) => option<string> = (req, value) =>
   req->acceptsLanguages(value)->parseValue
 
 @send external getRequestHeader: (request, string) => option<string> = "get"
 @send external is: (request, string) => 'a = "is"
 
+/**
+  Check if the request matches the given content type.
+  @param request The Express request object.
+  @param type The content type to check.
+  @return The matched type, or None if not matched.
+*/
 let is: (request, string) => option<string> = (req, value) => req->is(value)->parseValue
 
 @send external param: (request, string) => option<string> = "param"
@@ -264,7 +390,7 @@ external render: (response, string, ~locals: {..}=?, ~fn: (exn, string) => unit=
 @send external type_: (response, string) => string = "type"
 @send external vary: (response, string) => response = "vary"
 
-// Define a variant for HTTP status codes
+/** Variant type for HTTP status codes. */
 type httpStatus =
   | OK
   | Created
@@ -312,16 +438,37 @@ let getStatusCode: httpStatus => int = status =>
   | HTTPVersionNotSupported => 505
   }
 
-// Helper function to use the variant with the `status` binding
+/**
+  Set the HTTP status code on the response.
+  @param response The Express response object.
+  @param httpStatus The status code variant.
+  @return The response object.
+*/
 let status: (response, httpStatus) => response = (res, code) => res->setStatus(getStatusCode(code))
 
-// Helper function to use the variant with the `sendStatus` binding
+/**
+  Set the HTTP status code and send its string representation as the response body.
+  @param response The Express response object.
+  @param httpStatus The status code variant.
+  @return The response object.
+*/
 let sendStatus: (response, httpStatus) => response = (res, code) =>
   res->sendStatus(getStatusCode(code))
 
+/** Express Router module. */
 module Router = {
+  /** The Express Router type. */
   type t
+
+  /** Create a new Express Router instance. */
   @module("express") external make: unit => t = "Router"
+
+  /**
+    Use middleware or error handlers on the router.
+    @param t The Router instance.
+    @param middlewares The middleware or error handlers to use.
+    @param path Optional path to mount the middleware.
+  */
   @send
   external use: (
     t,
@@ -378,6 +525,13 @@ module Router = {
     @unwrap [#Handler(handler) | #AsyncHandler(asyncHandler)],
   ) => unit = "put"
 
+  /**
+    Register a route handler for all HTTP methods.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let all: (
     t,
     apiRoute,
@@ -390,6 +544,13 @@ module Router = {
       router->allWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
     }
 
+  /**
+    Register a route handler for all HTTP methods.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let get: (
     t,
     apiRoute,
@@ -402,6 +563,13 @@ module Router = {
       router->getWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
     }
 
+  /**
+    Register a POST route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let post: (
     t,
     apiRoute,
@@ -414,6 +582,13 @@ module Router = {
       router->postWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
     }
 
+  /**
+    Register a DELETE route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let delete: (
     t,
     apiRoute,
@@ -426,6 +601,13 @@ module Router = {
       router->deleteWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
     }
 
+  /**
+    Register a PATCH route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let patch: (
     t,
     apiRoute,
@@ -438,6 +620,13 @@ module Router = {
       router->patchWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
     }
 
+  /**
+    Register a PUT route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let put: (
     t,
     apiRoute,
@@ -450,17 +639,25 @@ module Router = {
       router->putWithMiddlewares(route, mds->unwrapMiddleware, #AsyncHandler(fn))
     }
 
+  /** Enable a setting on the Router instance. */
   type paramHandler = (request, response, unit => unit, string, string) => unit
 
+  /** Register a param handler on the router. */
   @send external param: (t, string, paramHandler) => unit = "param"
-  //@deprecated("deprecated as of v4.11.0")
-  //@send external defineParamBehavior: ((string, 'a) => paramHandler) => unit = "param"
 
+  /** Create a route on the router. */
   @send external route: string => t = "route"
 }
 
 @send external useRouter: (express, Router.t) => unit = "use"
 @send external useRouterWithPath: (express, string, Router.t) => unit = "use"
+
+/**
+  Attach a Router to an Express app, optionally at a path.
+  @param express The Express app.
+  @param router The Router instance.
+  @param path Optional path to mount the router.
+*/
 let useForRouter: (express, Router.t, ~path: string=?) => unit = (app, router, ~path="/") =>
   switch path {
   | p if p->String.length > 1 => app->useRouterWithPath(p, router)
