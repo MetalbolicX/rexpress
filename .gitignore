@@ -27,3 +27,5 @@
 *.mjs
 *.js
 /lib/
+docs/.vitepress/dist
+docs/.vitepress/cache
