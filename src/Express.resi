@@ -1,27 +1,60 @@
+/** The main Express application type. */
 type express
 
+/** Create an Express app using CommonJS import. */
 @module external expressCjs: unit => express = "express"
+
+/** Create an Express app using ES module import. */
 @module("express") external express: unit => express = "default"
 
+/** The Express request object. */
 type request
+
+/** The Express response object. */
 type response
 
+/** Synchronous middleware function type. */
 type middleware = (request, response, unit => unit) => unit
+
+/** Synchronous error-handling middleware function type. */
 type errorMiddleware = (exn, request, response, unit => unit) => unit
+
+/** Asynchronous middleware function type. */
 type asyncMiddleware = (request, response, unit => unit) => promise<unit>
+
+/** Asynchronous error-handling middleware function type. */
 type asyncErrorMiddleware = (exn, request, response, unit => unit) => promise<unit>
+
+/** Synchronous route handler type. */
 type handler = (request, response) => unit
+
+/** Asynchronous route handler type. */
 type asyncHandler = (request, response) => promise<unit>
 
+/** Convert an Express app to middleware. */
 external asMiddleware: express => middleware = "%identity"
 
-// The *Middleware suffixes aren't really nice but avoids forcing people to disable warning 44
+/** JSON body parser middleware. */
 @module("express") external jsonMiddleware: (~options: {..}=?) => middleware = "json"
+
+/** Raw body parser middleware. */
 @module("express") external rawMiddleware: (~options: {..}=?) => middleware = "raw"
+
+/** Text body parser middleware. */
 @module("express") external textMiddleware: (~options: {..}=?) => middleware = "text"
+
+/** URL-encoded body parser middleware. */
 @module("express") external urlencodedMiddleware: (~options: {..}=?) => middleware = "urlencoded"
+
+/** Static file serving middleware. */
 @module("express") external staticMiddleware: (string, ~options: {..}=?) => middleware = "static"
 
+/**
+  Use middleware or error handlers on the app.
+  @param express The Express app.
+  @param middlewares The middleware or error handlers to use.
+  @param path Optional path to mount the middleware.
+*/
 @send
 external use: (
   express,
@@ -34,18 +67,31 @@ external use: (
   ],
   ~path: string=?,
 ) => unit = "use"
+
+/** Set a setting on the Express app. */
 @send external set: (express, string, string) => unit = "set"
 
+/** Route type for API endpoints. */
 @unboxed
 type apiRoute =
   | String(string)
   | RegExp(RegExp.t)
 
+/** HTTP method type. */
 type method = [#GET | #POST | #PUT | #DELETE | #PATCH]
+
+/** API handler type, synchronous or asynchronous. */
 type apiHandler =
   | Handler(handler)
   | AsyncHandler(asyncHandler)
 
+/**
+  Register a GET route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let get: (
   express,
   apiRoute,
@@ -53,6 +99,13 @@ let get: (
   ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
 ) => unit
 
+/**
+  Register a POST route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let post: (
   express,
   apiRoute,
@@ -60,6 +113,13 @@ let post: (
   ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
 ) => unit
 
+/**
+  Register a PUT route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let put: (
   express,
   apiRoute,
@@ -67,6 +127,13 @@ let put: (
   ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
 ) => unit
 
+/**
+  Register a DELETE route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let delete: (
   express,
   apiRoute,
@@ -74,6 +141,13 @@ let delete: (
   ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
 ) => unit
 
+/**
+  Register a PATCH route handler.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let patch: (
   express,
   apiRoute,
@@ -81,6 +155,13 @@ let patch: (
   ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
 ) => unit
 
+/**
+  Register a route handler for all HTTP methods.
+  @param express The Express app.
+  @param apiRoute The route path or regex.
+  @param apiHandler The handler function.
+  @param middlewares Optional array of middleware.
+*/
 let all: (
   express,
   apiRoute,
@@ -88,12 +169,25 @@ let all: (
   ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
 ) => unit
 
+/** Enable a setting on the Express app. */
 @send external enable: (express, string) => unit = "enable"
+
+/** Check if a setting is enabled on the Express app. */
 @send external enabled: (express, string) => bool = "enabled"
+
+/** Disable a setting on the Express app. */
 @send external disable: (express, string) => unit = "disable"
 
+/** The Express server type. */
 type server
 
+/**
+  Start the Express server.
+  @param express The Express app.
+  @param port Optional port number.
+  @param host Optional host.
+  @param fn Optional callback for errors.
+*/
 @send
 external listen: (express, ~port: int=?, ~host: string=?, ~fn: exn => unit=?) => server = "listen"
 
@@ -159,7 +253,7 @@ external render: (response, string, ~locals: {..}=?, ~fn: (exn, string) => unit=
 @send external type_: (response, string) => string = "type"
 @send external vary: (response, string) => response = "vary"
 
-// Define a variant for HTTP status codes
+/** Variant type for HTTP status codes. */
 type httpStatus =
   | OK
   | Created
@@ -182,13 +276,36 @@ type httpStatus =
   | GatewayTimeout
   | HTTPVersionNotSupported
 
+/**
+  Set the HTTP status code on the response.
+  @param response The Express response object.
+  @param httpStatus The status code variant.
+  @return The response object.
+*/
 let status: (response, httpStatus) => response
+
+/**
+  Set the HTTP status code and send its string representation as the response body.
+  @param response The Express response object.
+  @param httpStatus The status code variant.
+  @return The response object.
+*/
 let sendStatus: (response, httpStatus) => response
 
+/** Express Router module. */
 module Router: {
+  /** The Express Router type. */
   type t
+
+  /** Create a new Express Router instance. */
   @module("express") external make: unit => t = "Router"
 
+  /**
+    Use middleware or error handlers on the router.
+    @param t The Router instance.
+    @param middlewares The middleware or error handlers to use.
+    @param path Optional path to mount the middleware.
+  */
   @send
   external use: (
     t,
@@ -202,6 +319,13 @@ module Router: {
     ~path: string=?,
   ) => unit = "use"
 
+  /**
+    Register a GET route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let get: (
     t,
     apiRoute,
@@ -209,6 +333,13 @@ module Router: {
     ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
   ) => unit
 
+  /**
+    Register a POST route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let post: (
     t,
     apiRoute,
@@ -216,6 +347,13 @@ module Router: {
     ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
   ) => unit
 
+  /**
+    Register a PUT route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let put: (
     t,
     apiRoute,
@@ -223,6 +361,13 @@ module Router: {
     ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
   ) => unit
 
+  /**
+    Register a DELETE route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let delete: (
     t,
     apiRoute,
@@ -230,6 +375,13 @@ module Router: {
     ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
   ) => unit
 
+  /**
+    Register a PATCH route handler.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let patch: (
     t,
     apiRoute,
@@ -237,6 +389,13 @@ module Router: {
     ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
   ) => unit
 
+  /**
+    Register a route handler for all HTTP methods.
+    @param t The Router instance.
+    @param apiRoute The route path or regex.
+    @param apiHandler The handler function.
+    @param middlewares Optional array of middleware.
+  */
   let all: (
     t,
     apiRoute,
@@ -244,13 +403,20 @@ module Router: {
     ~middlewares: array<[#Mid(middleware) | #AsyncMid(asyncMiddleware)]>=?,
   ) => unit
 
+  /** Enable a setting on the Router instance. */
   type paramHandler = (request, response, unit => unit, string, string) => unit
 
+  /** Register a param handler on the router. */
   @send external param: (t, string, paramHandler) => unit = "param"
-  //@deprecated("deprecated as of v4.11.0")
-  //@send external defineParamBehavior: ((string, 'a) => paramHandler) => unit = "param"
 
+  /** Create a route on the router. */
   @send external route: string => t = "route"
 }
 
+/**
+  Attach a Router to an Express app, optionally at a path.
+  @param express The Express app.
+  @param router The Router instance.
+  @param path Optional path to mount the router.
+*/
 let useForRouter: (express, Router.t, ~path: string=?) => unit
