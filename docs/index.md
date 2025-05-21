@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "rexpress"
-  text: "The Express js bindings to use ReScript programming language"
-  tagline: Lets have strong types in Express js
+  text: "The Express Js bindings for ReScript programming language"
+  tagline: Lets code a strong safe data type Express js backend without using TypeScript
   actions:
     - theme: brand
       text: Examples
