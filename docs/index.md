@@ -8,11 +8,14 @@ hero:
   tagline: Lets code a strong safe data type Express js backend without using TypeScript
   actions:
     - theme: brand
+      text: Get Started
+      link: /getting-started
+    - theme: alt
+      text: API
+      link: /api
+    - theme: brand
       text: Examples
       link: /examples
-    - theme: alt
-      text: API Examples
-      link: /api-examples
 
 features:
   - title: Feature A

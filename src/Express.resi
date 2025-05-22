@@ -62,8 +62,8 @@ external use: (
   [
     | #Mid(middleware)
     | #AsyncMid(asyncMiddleware)
-    | #CatchErr(errorMiddleware)
-    | #AsyncCatchErr(asyncErrorMiddleware)
+    | #Err(errorMiddleware)
+    | #AsyncErr(asyncErrorMiddleware)
   ],
   ~path: string=?,
 ) => unit = "use"
@@ -74,8 +74,9 @@ external use: (
 /** Route type for API endpoints. */
 @unboxed
 type apiRoute =
-  | String(string)
-  | RegExp(RegExp.t)
+  | Path(string)
+  | PathMatch(RegExp.t)
+  | ListPath(array<string>)
 
 /** HTTP method type. */
 type method = [#GET | #POST | #PUT | #DELETE | #PATCH]
@@ -346,8 +347,8 @@ module Router: {
     [
       | #Mid(middleware)
       | #AsyncMid(asyncMiddleware)
-      | #CatchErr(errorMiddleware)
-      | #AsyncCatchErr(asyncErrorMiddleware)
+      | #Err(errorMiddleware)
+      | #AsyncErr(asyncErrorMiddleware)
     ],
     ~path: string=?,
   ) => unit = "use"

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from "vitepress";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -6,23 +6,33 @@ export default defineConfig({
   description: "The ReScript bindings to use the Express js backend framework",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/examples' }
-    ],
+    nav: [{ text: "Home", link: "/" }],
 
     sidebar: [
       {
-        text: 'Examples',
+        text: "Setup",
         items: [
-          { text: "Getting Started", link: '/getting-started' },
-          { text: 'Runtime API Examples', link: '/api-examples' },
-        ]
+          { text: "Getting Started", link: "/getting-started" },
+          { text: "How to run", link: "/how-to-run" },
+        ],
+      },
+      {
+        text: "API",
+        items: [
+          { text: "API Reference", link: "/api" }
+        ],
+      },
+      {
+        text: "Examples",
+        items: [
+          { text: "Simple Example", link: "/examples" },
+          { text: "Advanced Example", link: "/examples/advanced" },
+        ],
       }
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
-    ]
-  }
-})
+      { icon: "github", link: "https://github.com/MetalbolicX/rexpress" },
+    ],
+  },
+});
