@@ -1,0 +1,189 @@
+import { Tabs, Tab } from '@theme';
+
+# Express
+
+:::info
+The ReScript bindings work only in Express.js version 5 or higher. In addition to check in more details the parameters and functions, you can also refer to the [Express.js documentation](https://expressjs.com/en/5x/api.html) for more information.
+:::
+
+## `express()`
+
+**Description**:
+Creates an Express application. The `express()` function is a top-level function exported by the express module.
+
+To start a new Express application, in JavaScript or TypeScript, it's as simple as:
+
+<Tabs>
+  <Tab label="CommonJS">
+    ```js
+    const express = require('express');
+    const app = express();
+    ```
+  </Tab>
+  <Tab label="ESM">
+    ```js
+    import express from 'express';
+    const app = express();
+    ```
+  </Tab>
+</Tabs>
+
+
+In ReScript, you can do the same with:
+
+<Tabs>
+  <Tab label="CommonJS">
+    ```js
+    open Express
+    let app = expressCjs()
+    ```
+  </Tab>
+  <Tab label="ESM">
+    ```js
+    open Express
+    let app = express()
+    ```
+  </Tab>
+</Tabs>
+
+:::note
+In ReScript `open Express` helps to reduce the boiler plate of writting the module in each usage of a function.
+:::
+
+::: warning
+It's preferable using the `express` function, as Node.js now supports ESM imports. The `expressCjs` function is provided only for backward compatibility with older Node.js versions.
+:::
+
+## Middlewares
+
+Express middlewares are functions that process incoming requests before they reach your route handlers. They can parse request bodies, serve static files, or handle errors. Below are the most common middlewares and their ReScript bindings:
+
+### `express.json([options])`
+
+Parses incoming requests with JSON payloads and makes the data available on `req.body`.
+Use this middleware when you expect clients to send JSON data (e.g., from a frontend app).
+
+**ReScript Signature:**
+```js
+jsonParser(~options: {..}=?) => (request, response, unit => unit) => unit
+```
+
+Parameters:
+- `~options`: Optional configuration object to customize the JSON parsing behavior.
+
+Returns a middleware function that can be used in your Express app.
+
+Example:
+```js
+jsonParser(~options={
+  "inflate": false,
+  "strict": false,
+})
+```
+
+### `express.raw([options])`
+
+Parses incoming requests with a raw body buffer and makes it available on `req.body`.
+This is useful for handling binary uploads or custom body formats.
+
+**ReScript Signature:**
+```js
+rawParser(~options: {..}=?) => (request, response, unit => unit) => unit
+```
+
+Parameters:
+- `~options`: Optional configuration object to customize the raw body parsing behavior.
+
+Returns a middleware function that can be used in your Express app.
+
+Example:
+```js
+rawParser(~options={
+  "inflate": false
+})
+```
+
+### `express.Router([options])`
+
+Creates a new router object to modularize your route definitions.
+Routers help organize your application by grouping related routes and middleware.
+
+**ReScript Signature:**
+```js
+Router.make(~options: {..}=?) => Router.t
+```
+
+Parameters:
+- `~options`: Optional configuration object to customize the router behavior.
+
+Returns a new router instance that can be used to define routes and middleware.
+
+Example:
+```js
+let router = Router.make()
+```
+
+### `express.static(root, [options])`
+
+Serves static files such as images, CSS, and JavaScript from a directory.
+This middleware is commonly used to serve assets for your frontend.
+
+**ReScript Signature:**
+```js
+ static(root: string, ~options: {..}=?) => (request, response, unit => unit) => unit
+```
+
+Parameters:
+- `root`: The root directory from which to serve static files.
+- `~options`: Optional configuration object to customize the static file serving behavior.
+
+Returns a middleware function that can be used in your Express app.
+
+Example:
+```js
+static("views", ~options={
+  "lastModified": false,
+})
+```
+
+### `express.text([options])`
+
+Parses incoming requests with plain text payloads and makes the text available on `req.body`.
+Use this when you expect plain text data (not JSON or form data).
+
+**ReScript Signature:**
+```js
+text(~options: {..}=?) => (request, response, unit => unit) => unit
+```
+Parameters:
+- `~options`: Optional configuration object to customize the text parsing behavior.
+
+Returns a middleware function that can be used in your Express app.
+
+Example:
+```js
+text(~options={
+  "inflate": false
+})
+```
+
+### `express.urlencoded([options])`
+
+Parses incoming requests with URL-encoded payloads (as from HTML forms) and exposes the data on `req.body`.
+Use this middleware for traditional form submissions.
+
+**ReScript Signature:**
+```js
+urlencoded(~options: {..}=?) => (request, response, unit => unit) => unit
+```
+Parameters:
+- `~options`: Optional configuration object to customize the URL-encoded parsing behavior.
+
+Returns a middleware function that can be used in your Express app.
+
+Example:
+```js
+urlencoded(~options={
+  "extended": true
+})
+```

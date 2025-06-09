@@ -9,7 +9,7 @@ router->Router.get(Path("/hello"), Handler((_req, res) => {
 }))
 
 app->useForRouter(router, ~path="/api")
-app->use(jsonMiddleware()->#Mid)
+app->use(jsonParser()->#Mid)
 
 app->get(Path("/"), Handler((_req, res) => {
   res->status(OK)->json({"message": "Hello World!"})->ignore

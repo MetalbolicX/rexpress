@@ -1,28 +1,26 @@
 ---
-# https://vitepress.dev/reference/default-theme-home-page
-layout: home
+pageType: home
 
 hero:
-  name: "rexpress"
-  text: "The Express Js bindings for ReScript programming language"
-  tagline: Lets code a strong safe data type Express js backend without using TypeScript
+  name: Rexpress
+  text: Documentation site for Rexpress
+  tagline: Type-safe, Express.js bindings for ReScript.
   actions:
     - theme: brand
-      text: Get Started
+      text: Getting Started
       link: /getting-started
     - theme: alt
-      text: API
-      link: /api
-    - theme: brand
-      text: Examples
-      link: /examples
+      text: API Reference
+      link: /api-index
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: 'MDX Support'
+    details: MDX is a powerful way to write content. You can use React components in Markdown.
+    icon: 📦
+  - title: 'Feature Rich'
+    details: Out of box support for i18n, full-text search etc.
+    icon: 🎨
+  - title: 'Customizable'
+    details: You can customize the theme ui and the build process.
+    icon: 🚀
 ---
-

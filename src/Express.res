@@ -35,19 +35,19 @@ type asyncHandler = (request, response) => promise<unit>
 external asMiddleware: express => middleware = "%identity"
 
 /** JSON body parser middleware. */
-@module("express") external jsonMiddleware: (~options: {..}=?) => middleware = "json"
+@module("express") external jsonParser: (~options: {..}=?) => middleware = "json"
 
 /** Raw body parser middleware. */
-@module("express") external rawMiddleware: (~options: {..}=?) => middleware = "raw"
+@module("express") external rawParser: (~options: {..}=?) => middleware = "raw"
 
 /** Text body parser middleware. */
-@module("express") external textMiddleware: (~options: {..}=?) => middleware = "text"
+@module("express") external text: (~options: {..}=?) => middleware = "text"
 
 /** URL-encoded body parser middleware. */
-@module("express") external urlencodedMiddleware: (~options: {..}=?) => middleware = "urlencoded"
+@module("express") external urlencoded: (~options: {..}=?) => middleware = "urlencoded"
 
 /** Static file serving middleware. */
-@module("express") external staticMiddleware: (string, ~options: {..}=?) => middleware = "static"
+@module("express") external static: (string, ~options: {..}=?) => middleware = "static"
 
 /**
   Use middleware or error handlers on the app.
@@ -261,6 +261,13 @@ let put: (
 /** Disable a setting on the Express app. */
 @send external disable: (express, string) => unit = "disable"
 
+/** Express app properties */
+@get external locals: express => {..} = "locals"
+@get external mountpath: express => string = "mountpath"
+
+/** Express app events */
+@send external on: (express, string, 'a => unit) => unit = "on"
+
 /** The Express server type. */
 type server
 
@@ -361,7 +368,7 @@ let is: (request, string) => option<string> = (req, value) => req->is(value)->pa
 
 // response properties
 @get external headersSent: response => bool = "headersSent"
-@get external locals: response => {..} = "locals"
+@get external localsRes: response => {..} = "locals"
 
 // response methods
 @send external append: (response, string, string) => response = "append"

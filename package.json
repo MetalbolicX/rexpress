@@ -1,26 +1,31 @@
 {
   "name": "rexpress",
+  "description": "The ReScrpipt version 11 bindings for Express.js version 5 to build web applications.",
   "version": "0.4.1",
   "scripts": {
     "res:clean": "rescript clean",
     "res:build": "rescript",
     "res:dev": "rescript -w",
-    "start": "bun ./example/App.res.mjs",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "start": "deno ./example/App.res.mjs",
+    "docs:dev": "rspress dev",
+    "docs:build": "rspress build",
+    "docs:preview": "rspress preview"
   },
   "keywords": [
-    "ReScript",
+    "rescript",
     "express"
   ],
   "author": {
     "name": "José Martínez Santana"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetalbolicX/rexpress.git"
+  },
   "license": "MIT",
   "devDependencies": {
     "express": "^5.1.0",
-    "vitepress": "^1.6.3"
+    "rspress": "^1.44.0"
   },
   "peerDependencies": {
     "express": "^5.1.0"
@@ -29,5 +34,5 @@
     "@rescript/core": "^1.6.1",
     "rescript": "^11.1.4"
   },
-  "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
+  "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
 }
