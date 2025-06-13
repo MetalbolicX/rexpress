@@ -6,7 +6,7 @@
     "res:clean": "rescript clean",
     "res:build": "rescript",
     "res:dev": "rescript -w",
-    "start": "deno ./example/App.res.mjs",
+    "start": "node ./example/App.res.mjs",
     "docs:dev": "rspress dev",
     "docs:build": "rspress build",
     "docs:preview": "rspress preview"
@@ -22,6 +22,12 @@
     "type": "git",
     "url": "https://github.com/MetalbolicX/rexpress.git"
   },
+  "bugs": {
+    "url": "https://github.com/MetalbolicX/rexpress/issues"
+  },
+  "files": [
+    "src"
+  ],
   "license": "MIT",
   "devDependencies": {
     "express": "^5.1.0",
