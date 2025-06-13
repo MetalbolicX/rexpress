@@ -11,16 +11,16 @@ hero:
       link: /getting-started
     - theme: alt
       text: API Reference
-      link: /api-index
+      link: /api/express
 
 features:
-  - title: 'MDX Support'
+  - title: "MDX Support"
     details: MDX is a powerful way to write content. You can use React components in Markdown.
     icon: 📦
-  - title: 'Feature Rich'
+  - title: "Feature Rich"
     details: Out of box support for i18n, full-text search etc.
     icon: 🎨
-  - title: 'Customizable'
+  - title: "Customizable"
     details: You can customize the theme ui and the build process.
     icon: 🚀
 ---

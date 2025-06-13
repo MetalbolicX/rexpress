@@ -65,7 +65,7 @@ Use this middleware when you expect clients to send JSON data (e.g., from a fron
 
 **ReScript Signature:**
 ```js
-jsonParser(~options: {..}=?) => (request, response, unit => unit) => unit
+let jsonParser(~options: {..}=?) => (request, response, unit => unit) => unit
 ```
 
 Parameters:
@@ -88,7 +88,7 @@ This is useful for handling binary uploads or custom body formats.
 
 **ReScript Signature:**
 ```js
-rawParser(~options: {..}=?) => (request, response, unit => unit) => unit
+let rawParser(~options: {..}=?) => (request, response, unit => unit) => unit
 ```
 
 Parameters:
@@ -110,7 +110,7 @@ Routers help organize your application by grouping related routes and middleware
 
 **ReScript Signature:**
 ```js
-Router.make(~options: {..}=?) => Router.t
+let Router.make(~options: {..}=?) => Router.t
 ```
 
 Parameters:
@@ -130,7 +130,7 @@ This middleware is commonly used to serve assets for your frontend.
 
 **ReScript Signature:**
 ```js
- static(root: string, ~options: {..}=?) => (request, response, unit => unit) => unit
+ let static(root: string, ~options: {..}=?) => (request, response, unit => unit) => unit
 ```
 
 Parameters:
@@ -153,7 +153,7 @@ Use this when you expect plain text data (not JSON or form data).
 
 **ReScript Signature:**
 ```js
-text(~options: {..}=?) => (request, response, unit => unit) => unit
+let text(~options: {..}=?) => (request, response, unit => unit) => unit
 ```
 Parameters:
 - `~options`: Optional configuration object to customize the text parsing behavior.
@@ -174,7 +174,7 @@ Use this middleware for traditional form submissions.
 
 **ReScript Signature:**
 ```js
-urlencoded(~options: {..}=?) => (request, response, unit => unit) => unit
+let urlencoded(~options: {..}=?) => (request, response, unit => unit) => unit
 ```
 Parameters:
 - `~options`: Optional configuration object to customize the URL-encoded parsing behavior.

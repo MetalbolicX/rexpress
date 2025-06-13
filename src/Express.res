@@ -261,9 +261,13 @@ let put: (
 /** Disable a setting on the Express app. */
 @send external disable: (express, string) => unit = "disable"
 
+/** Check if a setting is disabled on the Express app. */
+@send external disabled: (express, string) => bool = "disabled"
+
 /** Express app properties */
 @get external locals: express => {..} = "locals"
 @get external mountpath: express => string = "mountpath"
+@get external router: express => Router.t = "router"
 
 /** Express app events */
 @send external on: (express, string, 'a => unit) => unit = "on"
